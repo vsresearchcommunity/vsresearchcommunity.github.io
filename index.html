@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="/assets/logo.png" type="image/png" />
+    <title>VSS Research Community</title>
+    <link rel="stylesheet" href="style/index.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="logo"><h1>VSS Research Community</h1></div>
+      <nav id="nav-menu">
+        <a href="/find-doctor">Find Doctor</a>
+        <a href="/research">Research</a>
+        <a href="#contact">Contact</a>
+        <a href="#community">Community</a>
+      </nav>
+      <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="hero">
+      <h2>
+        Discover the Science Behind
+        <span style="color: #ff4081">Visual Snow</span>
+      </h2>
+      <p>
+        We're committed to advancing research, raising awareness, and supporting
+        individuals affected by Visual Snow Syndrome.
+      </p>
+      <button class="hero-button">
+        <a
+          style="
+            text-decoration: none;
+            color: inherit;
+            background: none;
+            border: none;
+          "
+          href="/research"
+          >Research</a
+        >
+      </button>
+    </div>
+
+    <main>
+      <section id="about">
+        <div class="section-title">About VSS</div>
+        <p class="about-text">
+          Visual Snow Syndrome (VSS) is a neurological condition where
+          individuals experience persistent static, visual disturbances, and
+          other sensory disruptions. Our mission is to centralize research,
+          raise awareness, and empower the global community of researchers and
+          patients alike.
+        </p>
+      </section>
+
+      <section id="research">
+        <div class="section-title">Explore Research</div>
+        <div class="slider-container">
+          <button class="arrow left" onclick="moveSlide(-1)">❮</button>
+          <div class="slider" id="slider"></div>
+          <button class="arrow right" onclick="moveSlide(1)">❯</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Contact Section -->
+    <section id="contact">
+      <div class="section-title">Get in Touch</div>
+      <div class="contact-content">
+        <p class="about-text" style="text-align: center">
+          Have questions or want to get involved? Reach out to us via email.
+        </p>
+        <div class="contact-email">
+          <a href="mailto:vsresearchcommunity@gmail.com" target="_blank">
+            vsresearchcommunity@gmail.com</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- Community Section -->
+    <section id="community">
+      <div class="section-title">Join Our Community</div>
+      <div class="community-content">
+        <p class="about-text" style="text-align: center">
+          Connect with others affected by Visual Snow Syndrome. Join our Discord
+          community today!
+        </p>
+        <div class="discord-button-container">
+          <a
+            href="https://discord.gg/umKBCkFU2K"
+            target="_blank"
+            class="discord-button"
+          >
+            <img
+              src="https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-512.png"
+              alt="Discord Logo"
+              class="discord-icon"
+            />
+            <span>Join Our Discord</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="footer-container">
+        <div class="footer-brand">
+          <h2>VSS Research Community</h2>
+          <p>Advancing awareness and research for Visual Snow Syndrome.</p>
+        </div>
+
+        <div class="footer-links">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="/research">Research</a></li>
+            <li><a href="/find-doctor">Find Doctor</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#community">Community</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-contact">
+          <h3>Contact Us</h3>
+          <a href="mailto:vsresearchcommunity@gmail.com" target="_blank">
+            <h3 class="mail">✉️</h3>
+          </a>
+          <div class="socials">
+            <a href="https://discord.gg/umKBCkFU2K" target="_blank">
+              <img
+                src="https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-512.png"
+                alt="Discord"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 VSS Research Community. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="script/index.js"></script>
+  </body>
+</html>

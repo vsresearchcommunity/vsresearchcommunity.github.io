@@ -1,0 +1,3230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Doctors Directory</title>
+    <style>
+      /* Reset and base styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a1a1a, #121212);
+        color: #f1f1f1;
+        padding: 2rem;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 2.2rem;
+        margin-bottom: 1.5rem;
+        color: #ffffff;
+        font-weight: 600;
+      }
+
+      .search-bar {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+      }
+
+      .search-bar input {
+        width: 100%;
+        max-width: 500px;
+        padding: 0.75rem 1rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        outline: none;
+        background-color: #2c2c2c;
+        color: #fff;
+      }
+
+      .doctor-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+      }
+
+      @media (min-width: 1200px) {
+        .doctor-container {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      .doctor-card {
+        background: rgba(30, 30, 30, 0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .doctor-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+      }
+
+      .doctor-image {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .doctor-info {
+        padding: 1.5rem;
+      }
+
+      .doctor-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #ffffff;
+      }
+
+      .doctor-country-state {
+        font-size: 0.9rem;
+        color: #aaa;
+        margin-bottom: 1rem;
+        letter-spacing: 0.5px;
+      }
+
+      .doctor-address,
+      .doctor-contact {
+        font-size: 0.9rem;
+        color: #ccc;
+        margin-bottom: 0.6rem;
+        line-height: 1.4;
+      }
+
+      .doctor-contact a {
+        color: #61dafb;
+        text-decoration: none;
+      }
+
+      .doctor-contact a:hover {
+        text-decoration: underline;
+      }
+
+      .profile-link {
+        display: inline-block;
+        margin-top: 1rem;
+        color: #61dafb;
+        font-size: 0.9rem;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+      }
+
+      .profile-link:hover {
+        color: #21a1f1;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Visual Snow <span style="color: #ff4081">Doctors</span></h1>
+
+    <!-- 🔍 Search Bar -->
+    <div class="search-bar">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search by name, country, or state..."
+      />
+    </div>
+
+    <div class="doctor-container" id="doctorContainer"></div>
+
+    <script>
+      const doctors = [
+        {
+          name: "Dr. Macarena Clementi",
+          country: "argentina",
+          state: "buenos-aires",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-macarena-clementi/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/macarena_clementi.jpg",
+          address:
+            "Av. Sta Fe 431, B1641 Acassuso, Provincia de Buenos Aires, Argentina",
+          contact: {
+            phone: "+54 911 5856-2206",
+            email: "draclementi@yahoo.com.ar",
+          },
+        },
+        {
+          name: "Dr. Joanne Fielding",
+          country: "australia",
+          state: "melbourne",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-joanne-fielding/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/03/Associate-Professor-Joanne-Fielding-e1680466521869.jpeg",
+          address:
+            "Department of Neuroscience\n\nCentral Clinical School, Monash University\nThe Alfred Centre, Level 6\n99 Commercial Road\nMelbourne VIC 3004",
+          contact: {
+            phone: "61 3 99030887",
+            email: "Joanne.Fielding@monash.edu",
+          },
+        },
+        {
+          name: "Dr. Justin O’Day",
+          country: "australia",
+          state: "melbourne",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-justin-oday/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Dr_Justin_O-Day_General_Physician.jpg",
+          address: "1/55 Victoria Parade, Fitzroy VIC 3065, Australia",
+          contact: {
+            phone: "+61 3 9417 1079",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Neil Shuey",
+          country: "australia",
+          state: "melbourne",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-neil-shuey/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/nsphoto-1.jpg",
+          address:
+            "Suite B33, Level 3/55 Victoria Parade, Fitzroy VIC 3065, Australia",
+          contact: {
+            phone: "61 3 8679 2410",
+            email: "admin@drneilshuey.com.au",
+          },
+        },
+        {
+          name: "Dr. Owen White",
+          country: "australia",
+          state: "melbourne",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-owen-white/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/03/White.jpg",
+          address:
+            "Department of Neuroscience- Monash University Australia\n183 Wattletree Rd, Malvern VIC 3144, Australia\nMelbourne, Victoria\nAustralia",
+          contact: {
+            phone: "+61 3 9576 0022",
+            email: "owen.White@monash.edu",
+          },
+        },
+        {
+          name: "Dr. Peter Hand",
+          country: "australia",
+          state: "melbourne",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-peter-hand/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/peter-hand.webp",
+          address: "Neurology Network Melbourne\nFitzroy, VIC\nAustralia",
+          contact: {
+            phone: "(03) 9500 8366",
+            email: "peter.hand@monash.edu",
+          },
+        },
+        {
+          name: "Dr. Gregor Brössner",
+          country: "austria",
+          state: "innsbruck",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-gregor-brossner/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Brössner-Gregor_MUI-Vandory-819x1024-1.jpg",
+          address:
+            "Department of Neurology, Medizinische Universität Innsbruck\nFritz-Pregl-Straße 3, 4th floor\nA-6020 Innsbruck\nInnsbruck, Austria",
+          contact: {
+            phone: "+4351290030",
+            email: "gregor.broessner@i-med.ac.at",
+          },
+        },
+        {
+          name: "Dr. Dani Yoshida",
+          country: "brazil",
+          state: "sao-paulo",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-dani-yoshida/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/unnamed-1-930x1024.jpg",
+          address:
+            "Instituto PRO Therapie\nR. Cardoso de Almeida, 60 – sala 42 – Perdizes, São Paulo – SP, 05013-000, Brazil",
+          contact: {
+            phone: "+5511940297648",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Paulo Antonio Almeida",
+          country: "brazil",
+          state: "belo-horizonte",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-paulo-antonio-almeida/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/channels4_profile.jpg",
+          address:
+            "Dr. Paulo Antonio Almeida Coaching\nAv. do Contorno, 6283 – Sala 603 – Funcionários, Belo Horizonte – MG, 30110-931, Brazil",
+          contact: {
+            phone: "+5531 999610253",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Viviane Passarelli",
+          country: "brazil",
+          state: "sao-paulo",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/viviane-passarelli/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/9d48ddcb1ce67ce1cfef661b89f9f5f9.jpeg",
+          address:
+            "R. Oscar Freire, 2250 – cj 501 – Pinheiros, São Paulo – SP, 05409-011, Brazil",
+          contact: {
+            phone: "(11) 917660080",
+            email: "neurologia.passarelli@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Guillaume Chabot",
+          country: "canada",
+          state: "quebec",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-guillaume-chabot/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Doc-avatar.jpg",
+          address:
+            "Quebec-Saint-Sacrement Hospital\n1050 ch Sainte-Foy, Québec\nQuebec, G1S 4L8\nCanada",
+          contact: {
+            phone: "+1(418)525-4444",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Harvey Naftolin",
+          country: "canada",
+          state: "toronto",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-harvey-naftolin/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Doc-avatar.jpg",
+          address:
+            "Forest Hill Optical\n398 Spadina Road\nToronto, ON M5P 2W2\n\nCanada",
+          contact: {
+            phone: "+1(416)630-4461",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Laura Cookson",
+          country: "canada",
+          state: "toronto",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-laura-cookson/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/laura_headshot_garden-background.jpg.webp",
+          address:
+            "61 James Snow Parkway North, Suite 201\nMilton, ON\nL9E 0H1, Canada",
+          contact: {
+            phone: "+1 905-876-6042",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Yasser Khan",
+          country: "canada",
+          state: "toronto",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-yasser-khan/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/2566.jpg",
+          address: "Mississauga, ON\nCanada",
+          contact: {
+            phone: "+1(905) 822-2020",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Andreas Straube",
+          country: "germany",
+          state: "munich",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-andreas-straube/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/c083180284467d2e15261114ff1644e68cab6672-300x300-1.webp",
+          address:
+            "Neurologische Klinik und Poliklinik mit Friedrich-Baur-Institut, Klinikum der Universität München, Standort Großhadern, Marchioninistraße 15, 81377 München, Germany",
+          contact: {
+            phone: "+49 89 70953900",
+            email: "andreas.straube@med.uni-muenchen.de",
+          },
+        },
+        {
+          name: "Dr. Charly Gaul",
+          country: "germany",
+          state: "taunus",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-charly-gaul/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Charly-Gaul.jpg",
+          address:
+            "Migräne- und Kopfschmerzklinik Königstein\nTaunus, Germany\nGermany",
+          contact: {
+            phone: "+49 6174 29040",
+            email: "info@migraene-klinik.de",
+          },
+        },
+        {
+          name: "Dr. Dagny Holle",
+          country: "germany",
+          state: "essen",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-dagny-holle/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Holle-Lee-Dagny_Prof._MAK1143_k-250x250-1.jpg",
+          address:
+            "Department of Neurology\nDepartment of Neurology, University of Duisburg-Essen\nEssen, Germany",
+          contact: {
+            phone: null,
+            email: "dagny.holle@uk-essen.de",
+          },
+        },
+        {
+          name: "Dr. Uwe Reuter",
+          country: "germany",
+          state: "berlin",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-uwe-reuter/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/uwe_reuter_297x337_px.jpg",
+          address: "Charité – Universitätsmedizin Berlin\nBerlin, Germany",
+          contact: {
+            phone: null,
+            email: "kopfschmerz@charite.de",
+          },
+        },
+        {
+          name: "Dr. Joshua Kruger",
+          country: "israel",
+          state: "jerusalem",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-joshua-kruger/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Joshua-Kruger.jpg",
+          address: "Hadassah Hospital -Ein Karem Campus\nJerusalem, Israel",
+          contact: {
+            phone: "02-6777111",
+            email: "dr.joshua.kruger@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Esmaeil Maghsudlu",
+          country: "iran",
+          state: "gorgan",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-esmaeil-maghsudlu/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/personalphoto.jpg",
+          address:
+            "Valiasr Street, Edalat 15 Alley, Iranian medical building\nIran, Golestan province, Gorgan",
+          contact: {
+            phone: "+981732354818",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Prem Nandini Satgunam",
+          country: "india",
+          state: "hyderabad",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-prem-nandini-satgunam/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/premnandhini-satgunam.jpg",
+          address:
+            "L V PRASAD EYE INSTITUTE\nOrthoptics & binocular vision\nBanjara Hills, Hyderabad, Telangana\nIndia",
+          contact: {
+            phone: "(905) 822-2020",
+            email: "premnandhini@lvpei.org",
+          },
+        },
+        {
+          name: "Dr. Spandan Thakar",
+          country: "india",
+          state: "ahmedabad",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-spandan-thakar/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/dr-spandan-thaker-psychiatrist-ahmedabad-9878.jpg",
+          address: "Mood and Mind Clinic\nAhmedabad, India",
+          contact: {
+            phone: "+91 99099 96035",
+            email: "drspandanthaker@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Michele Viana",
+          country: "italy",
+          state: "novara",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-michele-viana/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Michele_Viana-1024x1024.jpg",
+          address:
+            "Via Canobio 10, 28100 Novara, Italy\nVia Negri 4, 28047 Oleggio (NO), Italy",
+          contact: {
+            phone: "+39347 074 0642",
+            email: "michele.viana@lacefalea.info",
+          },
+        },
+        {
+          name: "Dr. Motohiro Kiyosawa",
+          country: "japan",
+          state: "tokyo",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-motohiro-kiyosawa/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/54344.png",
+          address:
+            "JIYUUGAOKA Kiyosawa Eye Clinic\nJiyuugaoka 1-25-9, Meguro, \nTokyo, Japan\n\n152-0035",
+          contact: {
+            phone: "8137185377",
+            email: "nra12337@nifty.com",
+          },
+        },
+        {
+          name: "Dr. Mi Ji Lee",
+          country: "korea",
+          state: "seoul",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-mi-ji-lee/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Dr.-Mi-Ji-Lee.jpeg",
+          address:
+            "Department of Neurology – Samsung Medical Center in Seoul, Korea\nSeoul, Korea",
+          contact: {
+            phone: "82-2-3410-1426",
+            email: "mijilee.md@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Mounir Khoury",
+          country: "lebanon",
+          state: "beirut",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-mounir-khoury/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Mounir-Khoury.jpg",
+          address: "St Rita boulevard, Lebanon",
+          contact: {
+            phone: "+961 71 823 573",
+            email: "mfkhoury@stgeorgehospital.org",
+          },
+        },
+        {
+          name: "Dr. Serge Bolyn",
+          country: "luxembourg",
+          state: "luxembourg",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-serge-bolyn/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/dr-bolyn.png",
+          address: "9 Rue Edward Steichen, 2540 Neudorf-Weimershof Luxembourg",
+          contact: {
+            phone: "+352 621 345 459",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Brenton Clark",
+          country: "new-zealand",
+          state: "tauranga",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-brenton-clark/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Brenton-Clark.webp",
+          address: "157 Chadwick Road Greerton, Tauranga 3112, New Zealand",
+          contact: {
+            phone: "(07) 577 0113",
+            email: "reception@visiquegreerton.co.nz",
+          },
+        },
+        {
+          name: "Dr. Jadwiga Bernardczyk-Meller",
+          country: "poland",
+          state: "poznan",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-jadwiga-bernardczyk-meller/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/meller.jpg",
+          address: "Złotowska 17, 60-189 Poznań, Poland",
+          contact: {
+            phone: "+48 61 661 05 98",
+            email: "poctza@bon-medic.pl",
+          },
+        },
+        {
+          name: "Dr. Laura Toro Yau",
+          country: "panama",
+          state: "panama-city",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-laura-toro-yau/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Dr_LT.jpeg",
+          address:
+            "1. Centro de Entrenamiento y Terapia Visual -CENTEVI\n\n2. The Panama Clinic, Torre A, piso 10, consultorio 1016",
+          contact: {
+            phone: "+507 310 2416",
+            email: "dra.laura@centevi.com",
+          },
+        },
+        {
+          name: "Dr. Enrique Santos-Bueso",
+          country: "spain",
+          state: "madrid",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-enrique-santos-bueso/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/578bdea8-5bc4-405a-a07b-76d18ac97da0.jpg",
+          address:
+            "Hospital Clínico San Carlos (HCSC) – Servicio de Oftalmología \nC. del Maestro Ángel Llorca, 8, 28003 Madrid, Spain",
+          contact: {
+            phone: "+34 911 56 29 19",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Christoph Schankin",
+          country: "switzerland",
+          state: "bern",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-christoph-schankin/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/03/Dr.CH_-1-e1680467981778.jpg",
+          address:
+            "Inselspital, Bern University Hospital, University of Bern, Freiburgstrasse, CH-3010 Bern, Switzerland",
+          contact: {
+            phone: null,
+            email: "christoph.schankin@insel.ch",
+          },
+        },
+        {
+          name: "Dr. Peter Sandor",
+          country: "switzerland",
+          state: "aarau",
+          profileUrl: "https://www.visualsnowinitiative.org/doctors/9288/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Sandor.jpg",
+          address: "ZURZACH Care AG, Quellenstrasse 34, 5330 Bad Zurzach",
+          contact: {
+            phone: "+41 56 269 51 51",
+            email: "peter.sandor@zurzachcare.ch",
+          },
+        },
+        {
+          name: "Dr. Gölge Acaroğlu",
+          country: "turkey",
+          state: "ankara",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-golge-acaroglu/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/38ec7f0828f161ad70d98379089e9b22.png",
+          address: "İran Caddesi 45/2, 06700 Çankaya, ANKARA, TURKEY",
+          contact: {
+            phone: "+90 312 467 0442",
+            email: "golgeacaroglu@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Luai T. Eldweik",
+          country: "united-arab-emirates",
+          state: "abu-dhabi",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-luai-t-eldweik/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/eldweik.jpeg",
+          address:
+            "Cleveland Clinic Abu Dhabi\n\n59 Hamouda Bin Ali Al Dhaheri St - Al Maryah Island - Abu Dhabi Global Market Square - Abu Dhabi - United Arab Emirates",
+          contact: {
+            phone: "+97180082223",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Bhavin Shah",
+          country: "united-kingdom",
+          state: "london",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-bhavin-shah/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/9344.webp",
+          address:
+            "Central Visión Opticians\n327 Regents Park Rd, London N3 1DP, United Kingdom",
+          contact: {
+            phone: "+44 20 8343 1122",
+            email: "info@central.vision",
+          },
+        },
+        {
+          name: "Dr. Farooq Maniyar",
+          country: "united-kingdom",
+          state: "london",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-farooq-maniyar/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Dr-Farooq-Maniyar-6037418.jpg",
+          address:
+            "Cleveland Clinic, 24 Portland Pl, London W1B 1LU, United Kingdom",
+          contact: {
+            phone: "+44 20 3423 7500",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Francesca Puledda",
+          country: "united-kingdom",
+          state: "london",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-francesca-puledda/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/03/Dr.-Francesca-Puledda-2-e1680468392543.jpg",
+          address:
+            "King’s College London\nInstitute of Psychiatry, Psychology and Neuroscience, Department of Basic and Clinical Neuroscience, London SE5 9PJ",
+          contact: {
+            phone: null,
+            email: "francesca.puledda@kcl.ac.uk",
+          },
+        },
+        {
+          name: "Dr. Gordon Plant",
+          country: "united-kingdom",
+          state: "london",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-gordon-plant/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/plant_portrait.jpg",
+          address:
+            "Moorfields Eye Hospital\n\n162 City Road, London, EC1V 2PD, United Kingdom",
+          contact: {
+            phone: "020 3443 3388",
+            email: "gordon.plant@nhs.net",
+          },
+        },
+        {
+          name: "Dr. Irfaan Adamally",
+          country: "united-kingdom",
+          state: "london",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-irfaan-adamally/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/IrfaanAdamally.jpg",
+          address:
+            "EyeTherapy\nTempo House (Entry on Patience Road), 15 Falcon Road, London, SW11 2PJ",
+          contact: {
+            phone: "+44 (0)7931 792570",
+            email: "irfaan@adamally.com",
+          },
+        },
+        {
+          name: "Dr. Mark Weatherall",
+          country: "united-kingdom",
+          state: "london",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-mark-weatherall/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/03/Dr.-Mark-Weatherall-e1680468539869.jpg",
+          address:
+            "1. The Medical Chambers, 10 Knaresborough Pl, London SW5 0TG, United Kingdom\n2. Clementine Churchill Hospital, Sudbury Hill, Harrow HA1 3RX, United Kingdom",
+          contact: {
+            phone: "+44 20 3934 2090",
+            email: "mark.weatherall@doctors.org.uk",
+          },
+        },
+        {
+          name: "Dr. Srilakshmi Sharma",
+          country: "united-kingdom",
+          state: "oxford",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-srilakshmi-sharma/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/dr-sreelakshmi-sharma-5d6922dbf1f26-1-1024x939.jpg",
+          address:
+            "Consultant at Oxford Eye Hospital and Honorary Consultant at Moorfields Eye Hospital\n\nLevel Lg1 John Radcliffe Hospital, Headley Way, Headington, Oxford OX3 9DU, United Kingdom",
+          contact: {
+            phone: "01865 594 299",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Sui Wong",
+          country: "united-kingdom",
+          state: "london",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-sui-wong/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Sui_Wong_562_x_562_Final.png",
+          address:
+            "Moorfields Eye Hospital NHS Foundation Trust and Guys & St Thomas’ NHS Foundation Trust\n\n162 City Rd, London EC1V 2PD, United Kingdom",
+          contact: {
+            phone: null,
+            email: "moorfields.swong@nhs.net",
+          },
+        },
+        {
+          name: "Dr. Manisha Geiger",
+          country: "united-states",
+          state: "arizona",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-manisha-geiger/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/348s.jpg",
+          address: "8406 E. Shea Boulevard, Suite 102, Scottsdale, AZ 85260",
+          contact: {
+            phone: "(480) 588-8858",
+            email: "optimumvisionaz@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Karissa N. Arca",
+          country: "united-states",
+          state: "arizona",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-karissa-n-arca/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/karissa-arca-16100468.webp",
+          address:
+            "Mayo Clinic Arizona\n\n13400 E Shea Blvd, Scottsdale, AZ 8525",
+          contact: {
+            phone: "(480)-301-8100",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Beth Ballinger",
+          country: "united-states",
+          state: "california",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-beth-ballinger/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Untitled.png",
+          address:
+            "Eye Care Associates in Minneapolis, MN\n\n901 Dover Drive, Suite100, Newport Beach, California 92660-5538, USA",
+          contact: {
+            phone: "949-642-0292",
+            email: "fourvision@yahoo.com",
+          },
+        },
+        {
+          name: "Dr. David Antonyan",
+          country: "united-states",
+          state: "california",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-david-antonyan/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/2d88257345f5b692075ad47f6c96313d_c5_720x720.jpeg",
+          address:
+            "Vivid Visions Optometry, Inc\n\n27201 Tourney Rd, Suite 100, Valencia, CA 91355, United States",
+          contact: {
+            phone: "(929)-374-3937",
+            email: "vividvisionsoptometry@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Kalie Baker",
+          country: "united-states",
+          state: "california",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-kalie-baker/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Drb1-1.webp",
+          address:
+            "Performance Vision Therapy\n\n1. 10801 National Blvd, Suite 430, Los Angeles, CA 90064\n\n2. 2790 Skypark Drive, Suite 115, Torrance, CA 90505\n\n3. 2424 SE Bristol, Suite 200, Newport Beach, CA 92660\n\n4. 31461 Rancho Viejo Rd, Suite 103, San Juan Capistrano, CA 92675",
+          contact: {
+            phone: "1(424)-407-3303",
+            email: "Info@Performancevt.com",
+          },
+        },
+        {
+          name: "Dr. Rebecca Michael",
+          country: "united-states",
+          state: "california",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-rebecca-michael/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/wlyxs2cth8bbyc3rvbnk.webp",
+          address:
+            "Sutter Health \n\nVan Ness Campus MOB\n\n1100 Van Ness Avenue, Floor 6, San Francisco, CA 94109",
+          contact: {
+            phone: "(415) 600-7886",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Shawn M. Joseph",
+          country: "united-states",
+          state: "california",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-shawn-m-joseph/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Screenshot-2023-04-05-123942.png",
+          address:
+            "Visual Processing Optometry\n\n1. 6345 Balboa Blvd, Building 3, Suite 250, Encino, CA  91316\n\n2. 2001 Barrington Ave, Suite 318, West Los Angeles, CA 90025",
+          contact: {
+            phone: "818-344-3937",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Terry Tsang",
+          country: "united-states",
+          state: "california",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-terry-tsang/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/03/terry_GSP_UID_92974ff9-5b13-4aa2-8c60-2b2b9fe9ade1-e1680468203447.png",
+          address:
+            "Dr. Terry Tsang Optometry, Inc.\n\n16520 Bake Pkwy Ste 240, Irvine, CA 92618, United States",
+          contact: {
+            phone: "949-870-2763",
+            email: "terry@drterrytsang.com",
+          },
+        },
+        {
+          name: "Dr. Victoria Pelak",
+          country: "united-states",
+          state: "colorado",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-victoria-pelak/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/03/Dr.-Victoria-Pelak.jpg",
+          address:
+            "UCHealth Eye Center – Rocky Mountain Lions Eye Institute / Division of Neuro-Ophthalmology\n\n1635 Aurora Ct, Aurora, CO 80045, United States",
+          contact: {
+            phone: "720-848-2020",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Scott R. Lewis",
+          country: "united-states",
+          state: "idaho",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-scott-r-lewis/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/scott_GSP_UID_9207fd14-93a8-4cbd-b497-bbfd345fffeb.webp",
+          address:
+            "Focus Vision Therapy Center\n3268 W Bavaria St, Eagle, ID 83616",
+          contact: {
+            phone: "(208) 939-0510",
+            email: "drscottlewis@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Richard Sorkin",
+          country: "united-states",
+          state: "florida",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-richard-sorkin/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/1657554.webp",
+          address: "5100 Central Avenue\nSt. Petersburg, FL 33707, USA",
+          contact: {
+            phone: "(727) 321-1101",
+            email: "rsorkin@yahoo.com",
+          },
+        },
+        {
+          name: "Dr. Jade Dandy",
+          country: "united-states",
+          state: "idaho",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-jade-dandy/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Dr.-Jade-Dandy-943x1024.png",
+          address:
+            "The Healing Hut \n\n600 E State St, Eagle, ID 83616, United States",
+          contact: {
+            phone: "208-939-6748",
+            email: "Contact@HealingHutClinic.com",
+          },
+        },
+        {
+          name: "Dr. Jeffrey W. Nichols",
+          country: "united-states",
+          state: "illinois",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-jeffrey-w-nichols/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/nichols-756x1024.jpg",
+          address: "18440 Governors Hwy, Homewood, IL 60430, United States",
+          contact: {
+            phone: "(708) 798-2191",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Michael DeStefano",
+          country: "united-states",
+          state: "illinois",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-michael-destefano/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/175540609_4545361392146888_5186487505774500699_n-819x1024.jpg",
+          address:
+            "3250 N Arlington Heights Road, Suite 109, Arlington Heights IL 60004, USA",
+          contact: {
+            phone: "(847)-255-1040",
+            email: "drdestefanood@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Thomas Mizen",
+          country: "united-states",
+          state: "illinois",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-thomas-mizen/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/1522.jpg",
+          address:
+            "1. Thomas R. Mizen, M.D. & Associates, LLC - Archer Ave.\n6187 S Archer AveSuite 101 Chicago, IL, 60638\n\n2. University Ophthalmology Associates\n1725 W Harrison StProfessional BuildingSuite 910 Chicago, IL, 60612\n\n3. Thomas R. Mizen, M.D. & Associates, LLC - Professional Building\n1725 W Harrison StProfessional BuildingSuite 928 Chicago, IL, 60612",
+          contact: {
+            phone: "(773) 581-2000",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Sophia Chung",
+          country: "united-states",
+          state: "iowa",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-sophia-chung/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/smchng-683x1024.jpg",
+          address: "200 Hawkins Dr, Iowa City, IA 52242, United States",
+          contact: {
+            phone: "(319)-356-1616",
+            email: "sophia-m-chung@uiowa.edu",
+          },
+        },
+        {
+          name: "Dr. Peter Goadsby",
+          country: "united-states",
+          state: "california",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-peter-goadsby/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/03/Dr.-Peter-Goadsby.jpeg",
+          address:
+            "UCLA David Geffen School of Medicine\n\nLos Angeles, CA, United States",
+          contact: {
+            phone: null,
+            email: "pgoadsby@ucla.edu",
+          },
+        },
+        {
+          name: "Dr. Azadeh Kelly",
+          country: "united-states",
+          state: "massachusetts",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-azadeh-kelly/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/DR.jpg",
+          address:
+            "Sunshine Vision Development Center\n\n117 W. Central St., Unit 207 Natick, MA 01760",
+          contact: {
+            phone: "(508) 519 3800",
+            email: "info@sunshinevision.com",
+          },
+        },
+        {
+          name: "Dr. Gabriel Fickett",
+          country: "united-states",
+          state: "massachusetts",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-gabriel-fickett/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Gabriel-Fickett-1.jpg",
+          address:
+            "Massachusetts Eye and Ear Infirmary- Stoneham, Massachusetts\n\n1 Montvale Ave, Stoneham, MA, USA",
+          contact: {
+            phone: "781-279-4418",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Steven Locke",
+          country: "united-states",
+          state: "massachusetts",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-steven-locke/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/new-Dr-lock-profile-pic1-680x1024.jpg",
+          address: "98 Brooks Road, Longmeadow, MA 01106, United States",
+          contact: {
+            phone: "508-343-0001",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Abby Metzler",
+          country: "united-states",
+          state: "minneapolis",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-abby-metzler/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/AbbyMetzler-1.jpg",
+          address:
+            "Neurology Clinic at M Health Fairview Clinics and Surgery Center – Minneapolis\n\n909 Fulton St SE, Minneapolis, MN 55455, United States",
+          contact: {
+            phone: "612‑626‑6688",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Carrie (Beth) E. Robertson",
+          country: "united-states",
+          state: "minnesota",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-carrie-beth-e-robertson/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/carrie-robertson-14508842.webp",
+          address:
+            "Mayo Clinic\n200 1st St SW, Rochester, MN 55905, United States",
+          contact: {
+            phone: "507-284-2511",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Collin McClelland",
+          country: "united-states",
+          state: "minnesota",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-collin-mcclelland/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/McClellandCollin-1913395158-733x1024.jpg",
+          address:
+            "University of Minnesota – Eye Clinic\n\n909 Fulton St SE 4th floor, Minneapolis, MN 55455, United States",
+          contact: {
+            phone: "(612) 625-4400",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Joseph Allen",
+          country: "united-states",
+          state: "minnesota",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-joseph-allen/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/JAllen-Suit-683x1024.jpg",
+          address: "180 Troop Dr, Sartell, MN 56377, United States",
+          contact: {
+            phone: "320-258-3915",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Sean J. Pittock",
+          country: "united-states",
+          state: "minnesota",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-sean-j-pittock/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Sean-Pittock-12928674.jpg",
+          address:
+            "Mayo Clinic\n\n200 1st St SW, Rochester, MN 55905, United States",
+          contact: {
+            phone: "507-284-2511",
+            email: "Pittock.Sean@mayo.edu",
+          },
+        },
+        {
+          name: "Dr. David Callahan",
+          country: "united-states",
+          state: "missouri",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-david-callahan/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/David-Callahan-280x386-1.jpg",
+          address:
+            "St. Louis Children’s Hospital\n\n13001 N Outer 40 Rd, Floor: 1, Suite: A, Town and Country, MO 63017, United States",
+          contact: {
+            phone: "314-454-6363",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Kenneth Levy",
+          country: "united-states",
+          state: "missouri",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-kenneth-levy/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Kenneth-Levy-280x386-1.jpeg",
+          address:
+            "St. Luke's Hospital \n\n226 S Woods Mill Rd #36W, Chesterfield, MO  63017",
+          contact: {
+            phone: "(314) 453-9666",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Sean Gratton",
+          country: "united-states",
+          state: "missouri",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-sean-gratton/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/doctor_sean_gratton_md200.jpg",
+          address:
+            "2301 Holmes Street Main Hospital 5th Floor, Kansas City, MO 64108, United States",
+          contact: {
+            phone: "816-404-5271",
+            email: "sabateseye@sabateseye.com",
+          },
+        },
+        {
+          name: "Dr. Steven Goodrich",
+          country: "united-states",
+          state: "missouri",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-steven-goodrich/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/1942285259-h.jpg",
+          address:
+            "Mercy Hospital St. Louis\n\n621 S New Ballas Rd Tower A Suite 585A, St. Louis, MO 63141, United States",
+          contact: {
+            phone: "314-251-6478",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Barry Tannen",
+          country: "united-states",
+          state: "new-jersey",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-barry-tannen/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/03/Barry-Tannen-OD-817x1024.webp",
+          address: "1775 Kuser Rd, Hamilton Township, NJ 08690, United States",
+          contact: {
+            phone: "(609) 581-5755",
+            email: "contactus@eyecareprofessionals.com",
+          },
+        },
+        {
+          name: "Dr. Golnaz Moazami",
+          country: "united-states",
+          state: "new-york",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-golnaz-moazami/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Untitled.png",
+          address: "635 W 165th St, New York, NY 10032, United States",
+          contact: {
+            phone: "212-305-3276",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. John M. Dovie",
+          country: "united-states",
+          state: "virginia",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-john-m-dovie/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/John-Dovie.jpg",
+          address:
+            "Blacksburg Eye Associates\n\n1440 S Main St, Blacksburg, VA 24060",
+          contact: {
+            phone: "540-953-2020",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Matthew Robbins",
+          country: "united-states",
+          state: "new-york",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-matthew-robbins/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/mar9391.jpg",
+          address:
+            "Weill Cornell Medicine, New York Presbyterian Hospital\n\n520 East 70th Street Starr Pavilion, 607, New York, NY 10021, United States",
+          contact: {
+            phone: "212-746-7038",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Myoung-Hee (Esther) Han",
+          country: "united-states",
+          state: "new-york",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-myoung-hee-esther-han/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/KY0A3692_248-e1593446607793-1.webp",
+          address:
+            "SUNY College of Optometry\n\n33 W 42nd St, New York, NY 10036, United States",
+          contact: {
+            phone: "(212) 938-4003",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Brett Miller",
+          country: "united-states",
+          state: "north-carolina",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-brett-miller/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/brett_miller.jpeg",
+          address:
+            "Triangle Visions Optometry- North Carolina\n\n79 Falling Springs Drive, Chapel Hill NC, USA",
+          contact: {
+            phone: "844-655-2020",
+            email: "vt@trianglevisions.com",
+          },
+        },
+        {
+          name: "Dr. Chantal Boisvert",
+          country: "united-states",
+          state: "vermont",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-chantal-boisvert/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/admin-ajax-1.jpg",
+          address:
+            "111 Colchester Avenue\nMain Campus, West Pavilion, Level 5\nBurlington, VT 05401-1473",
+          contact: {
+            phone: "(802) 847-0400",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. David Browning",
+          country: "united-states",
+          state: "north-carolina",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-david-browning/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/unnamed-2.jpg",
+          address:
+            "Atrium Health Wake Forest Baptist Eye Center\n329 NC HWY 801 N.\nBermuda Run, NC 27006",
+          contact: {
+            phone: "(336)716-4091",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Lisa Harvey",
+          country: "united-states",
+          state: "california",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-lisa-harvey/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Untitled.png",
+          address: "501 South Franklin Street, Fort Bragg, XA 95437",
+          contact: {
+            phone: "(707)-964-6499",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. David Biberdorf",
+          country: "united-states",
+          state: "north-dakota",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-david-biberdorf/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/biberdorf.jpg",
+          address:
+            "Valley Vision\n2200 S. Washington Street, Grand Forks, ND 58201",
+          contact: {
+            phone: "701-775-3135",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. James Kundart",
+          country: "united-states",
+          state: "oregon",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-james-kundart/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Kundart-James-2014.webp",
+          address:
+            "Pacific Eye Clinic, Pacific University\n\n2043 College Way, Forest Grove, OR 97116, United States",
+          contact: {
+            phone: "503-352-2759",
+            email: "kundart@pacificu.edu",
+          },
+        },
+        {
+          name: "Dr. Grant Liu",
+          country: "united-states",
+          state: "pennsylvania",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-grant-liu/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/liu_grant.jpg",
+          address:
+            "Hospital of the University of Pennsylvania\n3400 Spruce St, Philadelphia, PA 19104, United States",
+          contact: {
+            phone: "215-590-2791",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Patrick Tiedeken",
+          country: "united-states",
+          state: "pennsylvania",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-patrick-tiedeken/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/tiedeken_patrick.jpg",
+          address:
+            "Eye Associates of Lancaster\n606 Community Way, Lancaster, PA 17603, United States",
+          contact: {
+            phone: "(717) 397-4724",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Charles Shidlofsky",
+          country: "united-states",
+          state: "texas",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-charles-shidlofsky/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/03/Dr-Charles-Shidlofsky-OD-40791-zoom-e1680468087527.jpg",
+          address:
+            "Neuro-Vision Associates of N. Texas\n\n7140 Preston Road, Plano, Texas 75024, USA",
+          contact: {
+            phone: "(972) 312-0177",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Andrew G. Lee",
+          country: "united-states",
+          state: "texas",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-andrew-g-lee/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/TMHAGL.jpg",
+          address:
+            "Houston Methodist Hospital Blanton Eye Institute\n6560 Fannin St, Suite 450, Houston,\nTX 77030, United States",
+          contact: {
+            phone: "+1(713)-441-8843",
+            email: "aglee@houstonmethodist.org",
+          },
+        },
+        {
+          name: "Ronit Firman",
+          country: "united-states",
+          state: "texas",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/ronit-firman/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/ronit_GSP_UID_906365c5-8d26-4f6a-b292-5d961f2f181f.webp",
+          address:
+            "Neuro-Vision Associates of N. Texas\n\n7140 Preston Road\nPlano, Texas 75024\nUSA",
+          contact: {
+            phone: "+1 (972) 312-0177",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Dan Henry",
+          country: "united-states",
+          state: "utah",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-dan-henry/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Dan-Henry-MD-2021.jpg",
+          address: "2295 Foothill Dr, Salt Lake City\nUT 84109, United States",
+          contact: {
+            phone: "+1(801) 486-3021",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Adrianna Hempelmann",
+          country: "united-states",
+          state: "virginia",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/adrianna-hempelmann/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/7949a-scaled-1-683x1024.webp",
+          address:
+            "Blacksburg Eye Associates\n1440 S. Main Street, Unit 100\nBlacksburg, VA 24060",
+          contact: {
+            phone: "+1(540) 953-2020",
+            email: null,
+          },
+        },
+        {
+          name: "Jarrod Davies",
+          country: "united-states",
+          state: "utah",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/jarrod-davies/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/3ba4f7be84a9b646811d2a29b566fac2.webp",
+          address:
+            "Utah Vision Development Center\n3672 W South Jordan Pkwy, Ste 103\nSouth Jordan, Utah 84009\nUSA",
+          contact: {
+            phone: "+1 801-810-1060",
+            email: "drdavies@utahvt.com",
+          },
+        },
+        {
+          name: "Dr. Meagan Seay",
+          country: "united-states",
+          state: "utah",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-meagan-seay/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/FM00057754.jpg",
+          address:
+            "University of Utah\nMidvalley Health Center\n243 East 6100 South\nMurray, UT  84107",
+          contact: {
+            phone: "+1 (801) 585-3937",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Sam Mansour",
+          country: "united-states",
+          state: "virginia",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-sam-mansour/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Dr.Sam_.jpg",
+          address: "Virginia Retina Center\nLeesburg, VA\nUSA",
+          contact: {
+            phone: "+1 (540) 349-1882",
+            email: "infovrc@virginiaretina.com",
+          },
+        },
+        {
+          name: "Dr. Curtis Baxstrom",
+          country: "united-states",
+          state: "washington",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-curtis-baxstrom/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/CurtBaxstrom.jpg",
+          address:
+            "Vision Northwest\n1705 S. 324th Place\nFederal Way, WA  98003",
+          contact: {
+            phone: "+1(253)661-6005",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Paul S. Jensen",
+          country: "united-states",
+          state: "washington",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-paul-s-jensen/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Paul.jpg",
+          address: "112 Pelly Ave N, Renton, WA 98057",
+          contact: {
+            phone: "+1(425) 255-2020",
+            email: "nwdryeyecenter@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Melissa Allen",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-melissa-allen/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/1516796995815.jpeg",
+          address: "372 Port Hacking Rd\nCaringbah, NSW 2229",
+          contact: {
+            phone: "(02) 8544 0412",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Jacob Owen",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-jacob-owen/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/IMG_7535-225x300-1.jpg",
+          address: "New Clinic Coming Soon",
+          contact: {
+            phone: null,
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Amy Fortescue",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/amy-fortescue/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/admin-ajax.jpg",
+          address:
+            "Fortescue & Koszek EyeQ Optometrists Ramsgate\n\nShops 9-11, 191 Ramsgate Road Ramsgate NSW 2217",
+          contact: {
+            phone: "02 9529 4811",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Natasha Barnard-French",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-natasha-barnard-french/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Natasha-Barnard-French-Panoptic-Vision.webp",
+          address:
+            "Lake Cathie\nPanoptic Vision Lake Cathie\n1459 Ocean Drive, Lake Cathie, NSW 2445\n\nBellingen\nPanoptic Vision Bellingen\nShop 2, 58/60 Hyde Street, Bellingen, NSW, 2454",
+          contact: {
+            phone: "(02)6655 2768",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Craig Butler",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-craig-butler/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/1516429766840.jpeg",
+          address:
+            "Panoptic Vision Lake Cathie\n1459 Ocean Drive, Lake Cathie, NSW 2445",
+          contact: {
+            phone: "(02)6584 8900",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Geri Bergstein",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-geri-bergstein/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Doc-avatar.jpg",
+          address: "Beach Optique\nShop 2/11 Bungan Street\nMona Vale NSW 2103",
+          contact: {
+            phone: "02 9979 2510",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Dina Chungue",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-dina-chungue/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/dina-chungue-450.webp",
+          address:
+            "Mt. Annan Eyecare\nShop 3, 2-4 Main Street\nMt. Annan NSW 2567",
+          contact: {
+            phone: "(02)4648 0911",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. David Evian",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-david-evian/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Screenshot-2023-04-24-at-3.06.13-AM.png",
+          address:
+            "Dr David Evian\n6/219 Monavale Rd\nStIves NSW 2075\nAustralia",
+          contact: {
+            phone: "(+61) 0413 054 222",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Frank Filocamo",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-frank-filocamo/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/team-photo-1.jpg",
+          address:
+            "Leichhardt Eyecare\nShop 28 MarketPlace Leichhardt\nCnr. Marion & Flood Sts\nLeichhardt 2040",
+          contact: {
+            phone: "(02)9560 4707",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Frances Grasso",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-frances-grasso/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/ECP-Staff-Profile-Photos-2023_FrancesGrasso_350x350-jpg.webp",
+          address: "Eyecare Kids\nVarious Locations",
+          contact: {
+            phone: null,
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Soojin Nam",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-soojin-nam/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/download.jpeg",
+          address: "Eyecare Kids\nVarious Locations",
+          contact: {
+            phone: null,
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Carmin Hall",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-carmin-hall/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/4023d0_2d1f9178cd2e42249da707e12c13c9b1.webp",
+          address:
+            "Lamas & Brown Optometrists\nWollongbar Shopping Centre\n15/58 Simpson Ave, Wollongbar",
+          contact: {
+            phone: "(02)6621 4410",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Chih-Chi Lee",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-chih-chi-lee/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/295292524_448275923973724_6282617809096169745_n.jpg",
+          address:
+            "Chih-Chi Lee Behavioural Optometrists\n180b Old Northern Road\nCastle Hill\nNSW 2154",
+          contact: {
+            phone: "(02)8677 5483",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Rosemary Paynter",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-rosemary-paynter/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Rosemary-Paynter-Optometrist-resized.jpg",
+          address:
+            "Chih-Chi Lee Behavioural Optometrists\n180b Old Northern Road\nCastle Hill\nNSW 2154",
+          contact: {
+            phone: "(02)8677 5483",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Carolyn McIlvin",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-carolyn-mcilvin/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/1561953197957.jpeg",
+          address:
+            "OptimEyes Optometry\nSuite 2, Building 6\nForest Central Business Park\n49 Frenchs Forest Road East\nFrenchs Forest NSW 2086",
+          contact: {
+            phone: "(02)9982 1039",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. David O’Sullivan",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-david-osullivan/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/2213_David_Christopher_OSullivan.jpg",
+          address: "For Beautiful Eyes\nKenrick St, The Junction NSW 2291",
+          contact: {
+            phone: "(02)4965 4898",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Melanie Woodhouse",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-melanie-woodhouse/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/unnamed.jpg",
+          address:
+            "Eye Four Eye\n39 Sydney Road, Manly\nNew South Wales, 2095, Australia",
+          contact: {
+            phone: "(02)9977 3703",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Clare Campitelli",
+          country: "australia",
+          state: "carnegie",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-clare-campitelli/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Clare-Campitelli.jpeg",
+          address: "Vision On Koornang\n54 Koornang Road\nCarnegie VIC 3163",
+          contact: {
+            phone: "613 9563 1006",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Kwok Yan (Winnie) Chan",
+          country: "australia",
+          state: "fitzroy-north",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-kwok-yan-winnie-chan/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/kwok-yan-winnie_GSP_UID_96ebd905-f754-4f44-b4e8-a4f3b17e4d27.webp",
+          address:
+            "Fitzroy North Eye Center\n798 Nicholson St.\nFitzroy North, VIC 3068",
+          contact: {
+            phone: "613 9007 2195",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Sally Doyle",
+          country: "australia",
+          state: "fitzroy-north",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-sally-doyle/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/sally_GSP_UID_96ebd8cf-aca3-4057-9004-3d127d1e4948.webp",
+          address: "798 Nicholson St.\nFitzroy North, VIC 3068",
+          contact: {
+            phone: "613 9007 2195",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Amelia Na Jiao",
+          country: "australia",
+          state: "greensborough",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-amelia-na-jiao/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/4-1.jpg",
+          address:
+            "Leverett & Kindler Optometrists\nShop 3A & 3C\n35 Main St\nGreensborough Vic 3088",
+          contact: {
+            phone: "03 9435 4866",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Beverley Sacho",
+          country: "australia",
+          state: "prahran",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-beverley-sacho/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/1517631502085.jpeg",
+          address: "Eye Design Optometrists\n538 Malvern Rd\nPrahran, VIC 3181",
+          contact: {
+            phone: "03 9533 2000",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. George Sahely",
+          country: "australia",
+          state: "melbourne",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-george-sahely/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Doc-avatar.jpg",
+          address:
+            "Sight and Style Optometrists\n161 Main St\nMornington VIC 3931",
+          contact: {
+            phone: "03 5973 5520",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Michael Smith",
+          country: "australia",
+          state: "melbourne",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-michael-smith/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Screenshot-2023-04-24-at-3.56.31-AM.png",
+          address:
+            "Michael Smith Optometry\n3A/68 Elgin Boulevard\nWodonga, VIC 3690",
+          contact: {
+            phone: "(02)6056 2699",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Kunjam Vallam",
+          country: "australia",
+          state: "canberra",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/kunjam-vallam/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/VSS-Doctor-Female.jpg",
+          address:
+            "131 Monaro Street, Riverside Plaza\nQueanbeyan\nNSW\n2620\nAustralia",
+          contact: {
+            phone: "02 6299 4411",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Virginia Henry",
+          country: "australia",
+          state: "north-ward",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/virginia-henry/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/VHOpt040-1-Low-Res-683x1024.jpg",
+          address:
+            "Virginia Henry Optometrists\nShop 13A, Ground Floor, North Ward Shopping Village,\nCnr Eyre and Gregory Streets, North Ward QLD 4812 Australia",
+          contact: {
+            phone: "07 4724 1700",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Steve Leslie",
+          country: "australia",
+          state: "leederville",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/steve-leslie/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/1563413764958.jpeg",
+          address: "EyeSense\nUnit2/643 Newcastle Street\nLeederville, WA 6007",
+          contact: {
+            phone: "(08)6166 3777",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Elizabeth “Liz” Wason",
+          country: "australia",
+          state: "leederville",
+          profileUrl: "https://www.visualsnowinitiative.org/doctors/liz-wason/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Elizabeth-Wason.jpg",
+          address: "EyeSense\nUnit2/643 Newcastle Street\nLeederville, WA 6007",
+          contact: {
+            phone: "(08)6166 3777",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. John Palassis",
+          country: "australia",
+          state: "karrinyup",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/john-palassis/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/DSC02698-2-2-1024x1024.jpg",
+          address:
+            "Vision West\nShop SP003 Karrinyup Shopping Centre, 200 Karrinyup Road, Karrinyup",
+          contact: {
+            phone: "9445 1499",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Bev Reid",
+          country: "australia",
+          state: "tasmania",
+          profileUrl: "https://www.visualsnowinitiative.org/doctors/bev-reid/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Screenshot-2023-04-24-at-4.09.27-AM.png",
+          address: "Total Eyecare\nShop 19 Claremont Plaza\n35 Main Street",
+          contact: {
+            phone: "6249 9320",
+            email: "info@totaleyecare.com.au",
+          },
+        },
+        {
+          name: "Dr. Renee Edgar",
+          country: "new-zealand",
+          state: "wellington",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/renee-edgar/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/xcn3napk-crop-transparent-200-200.png",
+          address:
+            "McClellan Grimmer Edgar Optometrists\n77 Customhouse Quay\nWellington",
+          contact: {
+            phone: "04 473 6275",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Kristine Jensen",
+          country: "new-zealand",
+          state: "howick",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/kristine-jensen/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/KristineJensenEyesofHowick.jpeg",
+          address: "Eyes of Howick\n100 Pichon Street\nHowick, East Auckland",
+          contact: {
+            phone: "09 534 5565",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Niall McCormack",
+          country: "new-zealand",
+          state: "hastings",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/niall-mccormack/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Screenshot-2023-04-24-at-4.22.27-AM.png",
+          address: "ACBO\nHastings Hawkes Bay 4122\nNew Zealand",
+          contact: {
+            phone: "02 7273 4341",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Richard Shanks",
+          country: "new-zealand",
+          state: "wellington",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/richard-shanks/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/1.2-Richard_4-3_4-3_c-763x1024-1.jpg",
+          address:
+            "Barry & Sargent Optometrists\n1st Floor, 18 Willis Street, Wellington CBD",
+          contact: {
+            phone: "04 473 7047",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Brad Gollinger",
+          country: "united-states",
+          state: "new-york",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-brad-gollinger/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/06/1537791794604.jpg",
+          address:
+            "Monroe Family Eyecare\n91 Lakes Rd Suite 1 Monroe, NY 10950",
+          contact: {
+            phone: "(845) 783 1224",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Kevin Trac",
+          country: "australia",
+          state: "sydney",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-kevin-trac/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/06/KevinTracPhoto.webp",
+          address:
+            "Shop T204, Westmead Hospital\n(walk through the main entrance),\nCorner Hawkesbury and Darcy Road\nWestmead, NSW 2145",
+          contact: {
+            phone: "+61296358464",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Rupa Wong",
+          country: "honolulu",
+          state: "hawaii",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-rupa-wong/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/06/rupa-large-683x1024.jpg",
+          address:
+            "Honolulu Eye Clinic\n1329 Lusitana Street Suite 806 Honolulu, HI 96813",
+          contact: {
+            phone: "(808) 526-0030",
+            email: "info@honolulueyeclinic.com",
+          },
+        },
+        {
+          name: "Dr. Steffani Tiomno Viveros",
+          country: "united-states",
+          state: "new-jersey",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-steffani-tiomno-viveros/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/06/dr-tiomno-Copy-responsive-768x1024.jpg",
+          address: "3111 U.S. 9\nOld Bridge, NJ 08857",
+          contact: {
+            phone: "732-679-2020",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Jenna Williams-McDermed",
+          country: "united-states",
+          state: "florida",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-jenna-williams-mcdermed/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/06/94484a2e-3b36-4c1f-bf9f-a588c9459108-1.png",
+          address:
+            "Visual Health & Learning Center\n12301 Lake Underhill Rd., Suite 236\nOrlando, FL 32828",
+          contact: {
+            phone: "407-277-5729",
+            email: "patient.care@visualhealthlearning.com",
+          },
+        },
+        {
+          name: "Dr. Vicente Martin Montañez",
+          country: "spain",
+          state: "canary-islands",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-vicente-martin-montanez/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/07/1666115359218-461x1024.jpg",
+          address:
+            "Óptica Moncar\nC. Quiroga, 6, 35500 Arrecife, Canary Islands, Spain",
+          contact: {
+            phone: "+34 928811319",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Chiamaka Esther",
+          country: "nigeria",
+          state: "imo",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-chiamaka-esther/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/08/365625173_2561001320724280_612734492122730054_n-732x1024.jpg",
+          address:
+            "EyeMasters Specialist Eye Clinic \nNear Imo Library, opposite Okigwe junction, along Wethdral road, Owerri, Imo state, Nigeria.",
+          contact: {
+            phone: "08100697335",
+            email: "akwuruohaesther2@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Peter Gerhardstein",
+          country: "united-states",
+          state: "new-york",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-peter-gerhardstein/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/09/gerhard.jpg",
+          address:
+            "Dept. of Psychology        \nBinghamton University-SUNY\nBinghamton, NY 13902",
+          contact: {
+            phone: "+1 (607) 777-4387",
+            email: null,
+          },
+        },
+        {
+          name: "Alex Baldwin",
+          country: "canada",
+          state: "montreal",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/alex-baldwin/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/09/alex_baldwin.jpg",
+          address:
+            "Faculty of Medicine and Health Sciences / Faculté de médecine et des sciences de la santé\nMcGill University / Université McGill\n1650 Ave Cedar, L11.403\nMontreal, Quebec, Canada",
+          contact: {
+            phone: null,
+            email: "alexander.baldwin@mcgill.ca",
+          },
+        },
+        {
+          name: "Dr. Bryce Appelbaum",
+          country: "united-states",
+          state: "maryland",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-bryce-appelbaum/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/10/DrB-Headshot-Square.png",
+          address:
+            "MyVisionFirst\n6410 Rockledge Drive\nSuite 104\nBethesda, Maryland 20817\n\nMyVisionFirst\n133 Defense Highway\nSuite 113\nAnnapolis, Maryland 21401",
+          contact: {
+            phone: "301-897-8484",
+            email: "hello@myvisionfirst.com",
+          },
+        },
+        {
+          name: "Dr. Daniel Press",
+          country: "united-states",
+          state: "illinois",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-daniel-press/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/10/DJP-Headshot.2019.jpg",
+          address:
+            "Park Ridge Vision \n\n350 S Northwest Hwy, Suite 104 Park Ridge, IL 60068",
+          contact: {
+            phone: "847-823-8283",
+            email: "info@prvisioncare.com",
+          },
+        },
+        {
+          name: "Dr. Kenneth Ciuffreda",
+          country: "united-states",
+          state: "new-york",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-kenneth-ciuffreda/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/10/Ciuffreda-Kenneth-1-2-1024x946.webp",
+          address: "33 W 42nd St, New York, NY 10036, United States",
+          contact: {
+            phone: "212-938-5765",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Paul Graham",
+          country: "australia",
+          state: "queensland",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-paul-graham/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/10/Dr.-Paul-Graham.jpg",
+          address:
+            "Shop 20A/221 Christine Ave, Varsity Lakes QLD 4227 Australia",
+          contact: {
+            phone: "+617 5520 5900",
+            email: "dispenser@harmonyvisioncare.com.au",
+          },
+        },
+        {
+          name: "Dr. Carole L. Hong",
+          country: "united-states",
+          state: "california",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-carole-l-hong/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/11/Carole_L._Hong__OD__FCOVD_400x600.jpeg",
+          address: "57 El Camino Real\nSan Carlos, CA 94070",
+          contact: {
+            phone: "650-593-1661",
+            email: "email@familyvisioncare.org",
+          },
+        },
+        {
+          name: "Dr. Julie Kim",
+          country: "united-states",
+          state: "california",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-julie-kim/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/11/unnamed-11.jpg",
+          address: "57 El Camino Real\n​San Carlos, CA 94070",
+          contact: {
+            phone: "(650) 593-1661",
+            email: "email@familyvisioncare.org",
+          },
+        },
+        {
+          name: "Dr. Cynthia Huang",
+          country: "united-states",
+          state: "california",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-cynthia-huang/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/11/IMG_6324-1024x931.jpeg",
+          address: "​57 El Camino Real\n​San Carlos, CA 94070",
+          contact: {
+            phone: "(650) 593-1661",
+            email: "email@familyvisioncare.org",
+          },
+        },
+        {
+          name: "Dr. Kristi Jensen",
+          country: "united-states",
+          state: "california",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-kristi-jensen/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/11/IMG_8547-910x1024.jpg",
+          address: "57 El Camino Real\n​ San Carlos, CA 94070",
+          contact: {
+            phone: "(650) 593-1661",
+            email: "email@familyvisioncare.org",
+          },
+        },
+        {
+          name: "Dr. Veronica Hom",
+          country: "united-states",
+          state: "california",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-veronica-hom/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/11/IMG_8546.jpeg",
+          address: "57 El Camino Real\n​San Carlos, CA 94070",
+          contact: {
+            phone: "(650) 593-1661",
+            email: "email@familyvisioncare.org",
+          },
+        },
+        {
+          name: "Dr. Vassilis Kokotas",
+          country: "greece",
+          state: "athens",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-vassilis-kokotas/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/11/1517440906248.jpg",
+          address: "44, Irakleitou str., 15238\nHalandri\nAthens\nGREECE",
+          contact: {
+            phone: "+30 210 6396 651",
+            email: "info.optometria.gr@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Wynn Nguyen Tran",
+          country: "united-states",
+          state: "california",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-wynn-nguyen-tran/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/12/1568691878352.jpeg",
+          address: "1844 San Miguel Drive, Suite 300C\nWalnut Creek, CA 94596",
+          contact: {
+            phone: "+1 888 551 9991",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Leanna Dudley",
+          country: "united-states",
+          state: "colorado",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-leanna-dudley/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/12/Dr-Dudley-Square-2023-1-1024x1024.jpg",
+          address:
+            "Denver Vision Therapy\nADDRESS: 1450 Hoyt St, Denver, CO 80215",
+          contact: {
+            phone: "+1(303) 433 3277",
+            email: "info@denvervt.com",
+          },
+        },
+        {
+          name: "Dr. Lauren Goettemoeller",
+          country: "united-states",
+          state: "colorado",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-lauren-goettemoeller/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/12/Dr-G-Square-2023-1-1024x1024.jpg",
+          address: "Denver Vision Therapy: 1450 Hoyt St, Denver, CO 80215",
+          contact: {
+            phone: "+1(303) 433 3277",
+            email: "info@denvervt.com",
+          },
+        },
+        {
+          name: "Lawrence Robbins",
+          country: "united-states",
+          state: "illinois",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/lawrence-robbins/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/12/robbins-larry.jpg",
+          address:
+            "Robbins Headache Clinic\n2610 Lake Cook Rd Ste 160, Riverwoods, IL 60015, United States",
+          contact: {
+            phone: "(847)-374-9399",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Nikolas Moore",
+          country: "united-states",
+          state: "new-hampshire",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-nikolas-moore/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/02/unnamed-15.jpg",
+          address: "Harbor Eyecare Center\n\n164 Epping Rd, Exeter, NH 03833",
+          contact: {
+            phone: "603-430-0211",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Anabelle Charlebois",
+          country: "canada",
+          state: "montreal",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-anabelle-charlebois/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/03/felix-audette_1060-683x1024.jpg",
+          address:
+            "Clinique d'optométrie Uvée \nPlateau Location: 1668 Laurier Est, Montréal, QC, H2J1J2\n\nVilleray Location: 681 Jarry Est, Montréal, QC, H2P1W1",
+          contact: {
+            phone: null,
+            email: "info@uvee.ca",
+          },
+        },
+        {
+          name: "Dr. Neil Renaud",
+          country: "united-states",
+          state: "michigan",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-neil-renaud/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/03/EagleEye2BNeil.jpg",
+          address:
+            "Eagle Eye Performance Vision \n8516 Homestead Drive Suite 106\nZeeland, MI 49464",
+          contact: {
+            phone: "616 848 7548",
+            email: "drneil@eagleeyevisiontherapy.com",
+          },
+        },
+        {
+          name: "Dr. Eliécer Arosemena Vence",
+          country: "panama",
+          state: "panama-city",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-eliecer-arosemena-vence/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/03/54175238_1543807415751015_6800638447548628992_n.jpg",
+          address:
+            "Oftalmo Advanced Clinic \nPlaza Camino de Cruces, Plaza Camino de Cruces, Local 9 diagonal a la Cooperativa Profesionales, Av. Miguel A. Brostella, Panama City, Panama",
+          contact: {
+            phone: "+507 394-9690",
+            email: null,
+          },
+        },
+        {
+          name: "Melbourne Eyecare Clinic",
+          country: "australia",
+          state: "melbourne",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/melbourne-eyecare-clinic/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/03/Screenshot-2024-03-15-204526-1024x361.png",
+          address:
+            "Melbourne Eyecare Clinic \n200 Berkeley Street, Carlton, Victoria 3053 Australia",
+          contact: {
+            phone: "03 9035 6666",
+            email: "uni-eyecare@unimelb.edu.au",
+          },
+        },
+        {
+          name: "Dr. Luciana Lacono",
+          country: "argentina",
+          state: "buenos-aires",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-luciana-lacono/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/12/1724683899343.jpg",
+          address:
+            "Hospital de Clinicas\nAv. Córdoba 2351, C1120 Cdad. Autónoma de Buenos Aires, Argentina \n\n\nConsultorios Oftalmológicos Berazategui\nCalle 150 N° 1320 entre 13 y 14 . (C1425ELA) Berazategui - Buenos Aires.",
+          contact: {
+            phone: "+549119271461",
+            email: "lucianaiacono@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Donald Stewart",
+          country: "united-states",
+          state: "north-carolina",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-donald-stewart/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/04/Don-Stewart.jpg",
+          address:
+            "Charlotte Eye Ear Nose & Throat Associates\n724 Aubreybell Drive\nMatthews, NC 28105",
+          contact: {
+            phone: "(704)295-3550",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Jeremy Shumaker",
+          country: "united-states",
+          state: "california",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-jeremy-shumaker/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/04/unnamed-1024x719.jpg",
+          address:
+            "Dr. Jeremy Shumaker, OD\nRising Star Optometry\n361 C Third Street\nSan Rafael, CA 94901\n\n\nDr. Jeremy Shumaker. OD\nRising Star Optometry\n2369 Ocean Ave Suite 3\nSan Francisco, CA 94127\n\n\nChief, Sports Vision & Concussion Clinic\nHerbert Wertheim School of Optometry and Vision Science\nTang Eye Center\n3rd Floor, University Health Services\n2222 Bancroft Way\nBerkeley, CA 94720\n510-643-2020\n[email protected]\nhttps://eyecare.berkeley.edu/what-we-do-2/speciality-clinics/sports-vision/",
+          contact: {
+            phone: "415-459-2020",
+            email: "office@risingstarvision.com",
+          },
+        },
+        {
+          name: "Dr. Susan Walton",
+          country: "australia",
+          state: "newcastle",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-susan-walton/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/05/Dr.-Susan-Walton.png",
+          address: "Special Eyes\n245 King Street\nNewcastle NSW 2300",
+          contact: {
+            phone: "(02)4926 4799",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Antonia Klein",
+          country: "switzerland",
+          state: "bern",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-antonia-klein/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/07/Antonia.jpeg",
+          address:
+            "Inselspital, Bern University Hospital, University of Bern, Freiburgstrasse, CH-3010 Bern, Switzerland",
+          contact: {
+            phone: null,
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Priya Pandey",
+          country: "india",
+          state: "tamil-nadu",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-priya-pandey/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/07/Dr.-Priya-Pandey.jpeg",
+          address:
+            "Caring Vision Therapy & Neuro Vision Rehabilitation Center Chennai/Hyderabad (India)\nAddress 10/16, plot 1134, first floor, 16th avenue , Ashok Nagar chennai 600083\n\n+919445140968/+919693630033",
+          contact: {
+            phone: "+919693630033",
+            email: "caringvisiontherapy@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Marina Romozzi",
+          country: "italy",
+          state: "rome",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-marina-romozzi/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/09/1698169235219.jpg",
+          address: "Largo Agostino Gemelli, 8, 00136 Roma RM, Italy",
+          contact: {
+            phone: null,
+            email: "marinaromozzi@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Vincenzo Trigila",
+          country: "italy",
+          state: "rome",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-vincenzo-trigila/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/09/1720815222776.jpg",
+          address: "Largo Agostino Gemelli, 8, 00136 Roma RM, Italy",
+          contact: {
+            phone: null,
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Danielle Isen",
+          country: "united-states",
+          state: "alabama",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-danielle-isen/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/09/unnamed-1-765x1024.jpg",
+          address:
+            "Southern Eye Group, 601 Providence Park Drive, Mobile, AL 36695",
+          contact: {
+            phone: "1-251-990-3937",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. John R. Martinelli",
+          country: "united-states",
+          state: "pennsylvania",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-john-r-martinelli/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/10/IMG_0860-scaled-1-683x1024.jpeg",
+          address:
+            "Medical Eyecare & Glaucoma\nOP Consulting & Publishing\nMartinelli Eye & Laser Centers\n\n303 First St., Charleroi, PA 15022",
+          contact: {
+            phone: "724-483-3675  724-880-8241",
+            email: "john@doctormartinelli.com",
+          },
+        },
+        {
+          name: "Dr. Peter Turner",
+          country: "united-kingdom",
+          state: "bristol",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-peter-turner/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/10/Peter_Turner_2024-894x1024.jpg",
+          address: "Turners Opticians\n57 Henleaze Road\nBRISTOL  BS9 4JT",
+          contact: {
+            phone: "+44 117 9622 474",
+            email: "eyegym@turnersopticians.co.uk",
+          },
+        },
+        {
+          name: "Dr. Maggie Miriam Yamin",
+          country: "united-states",
+          state: "florida",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-maggie-miriam-yamin/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/10/Screenshot-2024-10-24-223014-812x1024.png",
+          address:
+            "Inspire Vision Therapy and Rehab\n4330 Sheridan Street #102B\nHollywood, FL 33021",
+          contact: {
+            phone: "754-231-1632",
+            email: "Info@inspirevisiontherapy.net",
+          },
+        },
+        {
+          name: "Dr. Jill Schultz",
+          country: "united-states",
+          state: "minnesota",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-jill-schultz/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/10/Facetune_02-02-2021-23-05-50-2-1-768x1024.webp",
+          address:
+            "Bright Eyes Vision Clinic and Neuro Vision Center of MN\n\nOtsego and Minnetonka locations. \n15704 90th St NE, #100, Otsego, MN 55330\n13889 Ridgedale Drive, Minnetonka, MN 55305",
+          contact: {
+            phone: "(763) 241-1090",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Emily Nelsen",
+          country: "united-states",
+          state: "minnesota",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-emily-nelsen/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/10/Dr._Emily_Nelsen_e1664557354847.jpg",
+          address:
+            "Bright Eyes Vision Clinic, PA\n\n15704 90th St NE, #100, Otsego, MN 55330 \n13889 Ridgedale Drive, Minnetonka, MN 55305",
+          contact: {
+            phone: "(763) 241-1090",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Maria Coward",
+          country: "canada",
+          state: "nova-scotia",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-maria-coward/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/11/dr-maria.jpg",
+          address:
+            "CM Optical\n615 Main Street\nYarmouth Nova Scotia Canada\nB5A 1K1",
+          contact: {
+            phone: "902-742-1606",
+            email: "cmoptical@eastlink.ca",
+          },
+        },
+        {
+          name: "Dr. Luis Idrovo",
+          country: "united-kingdom",
+          state: "leeds",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-luis-idrovo/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/11/Luis-Idrovo.jpg",
+          address: null,
+          contact: {
+            phone: "+44 7495 364598",
+            email: "enquiries@drluisidrovo.co.uk",
+          },
+        },
+        {
+          name: "Dr. Gisela Terwindt",
+          country: "netherlands",
+          state: "leiden",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-gisela-terwindt/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2024/12/d200x250.jpeg",
+          address: "LUMC Main Building\nAlbinusdreef 2\n2333 ZA Leiden",
+          contact: {
+            phone: null,
+            email: "hoofdpijnonderzoek@lumc.nl",
+          },
+        },
+        {
+          name: "Dr. Nellie Galoyan",
+          country: "united-states",
+          state: "ohio",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-nellie-galoyan/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/01/7813.jpg",
+          address: "6100 N Hamilton Rd, Westerville, OH 43081, United States",
+          contact: {
+            phone: "+1 614-814-8100",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Yap Tiong Peng",
+          country: "singapore",
+          state: "singapore",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-yap-tiong-peng/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/01/TP1-837x1024.jpg",
+          address:
+            "51 Cuppage Road #01-04, IGARD Vision Therapy, Singapore 229469",
+          contact: {
+            phone: "(+65) 9025 6677",
+            email: "eyecentre@igard.com.sg",
+          },
+        },
+        {
+          name: "Dr. Gerard Alderliefste",
+          country: "netherlands",
+          state: "amsterdam",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-gerard-alderliefste/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/01/2022-ROBVANDAMFOTO.NL-1184-819x1024.jpg",
+          address: "Richard Holkade 4, Haarlem, 2033 PZ, NL",
+          contact: {
+            phone: null,
+            email: "gerard.alderliefste@brijder.nl",
+          },
+        },
+        {
+          name: "Dr. Andy Teo",
+          country: "singapore",
+          state: "singapore",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-andy-teo/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/01/Andy-Teo-Developmental-Optometrist-772x1024.png",
+          address: "220 Orchard Road #03-05 Singapore 238852",
+          contact: {
+            phone: "+65 9641 2430",
+            email: "care@visionandperception.com.sg",
+          },
+        },
+        {
+          name: "Dr. Lian Gabriel Onanad Sarmiento",
+          country: "philippines",
+          state: "antique",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-lian-gabriel-onanad-sarmiento/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/01/1705061234444.jpg",
+          address:
+            "A) Onanad Optical Clinic, Branch 1, Unit 108, St. Joseph Center, Villavert-Jimenez St., Cor. Gen. Fullon St., San Jose de Buenavista, Antique, 5700\n\nB) Onanad Optical Clinic, Branch 2, Ground Floor, Unit 9, Gaisano Grand Mall of Antique, Brgy. 8, Bagumbayan Bridge, San Jose de Buenavista, Antique, 5700",
+          contact: {
+            phone: "(036) 540-12-41",
+            email: "liangabrielonanadsarmiento@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Hyun-jin Shin",
+          country: "south-korea",
+          state: "gwangjin-district",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-hyun-jin-shin/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/01/Hyunjin_Shin_신현진-854x1024.jpg",
+          address:
+            "Ophthalmologic department, 120-1, Neungdong-ro, Gwangjin-gu, Seoul, Republic of Korea (zip :5030)",
+          contact: {
+            phone: null,
+            email: "shineye20@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Mei Lin Liew",
+          country: "malaysia",
+          state: "selangor",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-mei-lin-liew/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/01/Profile-Photo-2024.jpeg",
+          address:
+            "Home & Work Optometry Care\n15, Jalan Tengku Ampuan Zabedah B 9/B, \nSection 9.\n40100 Shah Alam.\nSelangor. Malaysia",
+          contact: {
+            phone: "+603-55118689",
+            email: "mlliew@home-n-work.com",
+          },
+        },
+        {
+          name: "Dr. Mamiko Fenella P Sy",
+          country: "philippines",
+          state: "manila",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-mamiko-fenella-p-sy/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/01/A0216B91-3B4A-402C-A98A-0980964B3B27.jpeg",
+          address:
+            "QCPH Vision Rehab & Development Center\nTopy’s Place Commercial Building, Ground Floor, Quezon City, 1110 Metro Manila, Philippines",
+          contact: {
+            phone: "+63 917 143 2900",
+            email: "qcphvisionrehab@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Jacqueline Theis, OD, FAAO",
+          country: "united-states",
+          state: "virginia",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-jacqueline-theis-od-faao/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/01/Theis.jpg",
+          address:
+            "Virginia Neuro-Optometry\nLocated at the Concussion Care Centre of Virginia, LTD\n3721 Westerre Parkway, Suite B\nRichmond, VA 23233",
+          contact: {
+            phone: "804-387-2902",
+            email: "info@virginianeurooptometry.com",
+          },
+        },
+        {
+          name: "Dr. Luna Seridon",
+          country: "philippines",
+          state: "manila",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-luna-seridon/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/01/Beige-Minimal-Info-About-Us-Instagram-Post-1024x1024.png",
+          address:
+            "QCPH Vision Rehab & Development Center Topy’s Place Commercial Building, Ground Floor, Quezon City, 1110 Metro Manila, Philippines",
+          contact: {
+            phone: "63 917 143 2900",
+            email: "qcphvisionrehab@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Isobelle Wong",
+          country: "singapore",
+          state: "singapore",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-isobelle-wong/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/01/image0-4.jpeg",
+          address:
+            "51 Cuppage Road #01-04, IGARD Vision Therapy, Singapore 229469",
+          contact: {
+            phone: "(+65) 9025 6677",
+            email: "eyecentre@igard.com.sg",
+          },
+        },
+        {
+          name: "Dr. Chee Hou Soong",
+          country: "malaysia",
+          state: "penang",
+          profileUrl: "https://www.visualsnowinitiative.org/doctors/18814/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/01/image.png",
+          address:
+            "Eyetron Optometry\n98-G-23 Prima Tanjung, Jalan Fettes, Tanjung Tokong, 11200 George Town, Pulau Pinang.\n\nEyetron Optometry\nLot 1F-43A, First Floor, Queensbay Mall, 100 Persiaran Bayan Lepas Indah, 11900 Bayan Lepas, Penang.",
+          contact: {
+            phone: "+604-8931758",
+            email: "eyetron.pt@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Ignacio del pino de Laguno",
+          country: "spain",
+          state: "malaga",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-ignacio-del-pino-de-laguno/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/02/1714748614959.jpg",
+          address:
+            "Hospital Universitario Virgen de la Victoria\nCampus de Teatinos, S/N, Puerto de la Torre, 29010 Málaga, Spain",
+          contact: {
+            phone: "+34 638198940",
+            email: "delaguno1993@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Max Aricochi",
+          country: "austria",
+          state: "innsbruck",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-max-aricochi/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/02/QA.png",
+          address:
+            "Augenzentrum Kettenbrücke Innsbruck | Dimmer Mayer Zehetner\nSennstraße 1, 6020 Innsbruck, Austria",
+          contact: {
+            phone: "+43 512 21127210",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Douglas J. Villella",
+          country: "united-states",
+          state: "pennsylvania",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-douglas-j-villella/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/02/douglasvillella-new.webp",
+          address: "1202 State Street\nErie, PA 16501\nUSA",
+          contact: {
+            phone: "(814) 455-7222",
+            email: "medical@community-healthnet.com",
+          },
+        },
+        {
+          name: "Dr. Tanya Bloom",
+          country: "united-states",
+          state: "new-york",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-tanya-bloom/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/02/Dr.-Tanya-Bloom-OD-FAAO-.webp",
+          address:
+            "Whole Picture Health and Vision\n322 N Aurora St \nIthaca, NY 14850",
+          contact: {
+            phone: "607-277-4749",
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Rajeev Prasad",
+          country: "india",
+          state: "noida",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-rajeev-prasad/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/03/Dr.Rajeev-Prasad-1024x858.jpeg",
+          address:
+            "Visual Eyez – Vision Therapy & Optometric Neuro Vision\nRehabilitation Centre, Myopia & Speciality Contact Lens Center\n\n1st Floor, House No, C-39, C Block, Pocket C, Sector 20,\nNoida, Uttar Pradesh 201301.",
+          contact: {
+            phone: "+91 9334119505",
+            email: "rajeev@visualeyezindia.com",
+          },
+        },
+        {
+          name: "Dr. Tobbie Llenado",
+          country: "philippines",
+          state: "davao-city",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-tobbie-llenado/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/03/FB_IMG_1713342761268-1017x1024.jpg",
+          address:
+            "Orozco Eye Center & Optical Clinic\nMatina Aplaya Relief Bridge Door 13, Dava City",
+          contact: {
+            phone: "09367285802",
+            email: "tobbiellenadojr@gmail.com",
+          },
+        },
+        {
+          name: "Dr.  Ana rhea Arcega",
+          country: "philippines",
+          state: "manila",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-ana-rhea-arcega/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/03/20250129_142531-1024x1024.jpg",
+          address: "Centro Regalados Optical\n1161 A. Mabini St. Ermita Manila",
+          contact: {
+            phone: "0917 5800 747",
+            email: "centrooptical27@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Priti Doshi Mistry",
+          country: "india",
+          state: "mumbai",
+          profileUrl: "https://www.visualsnowinitiative.org/doctors/19253/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/03/419946086_810826811058973_8903267784016805874_n-768x1024.jpg",
+          address:
+            "Prime Eye Care \n1, Vishwas Building, Opp. Fire Brigade Station, Azad Road, Vile Parle East, Mumbai, India, Maharashtra",
+          contact: {
+            phone: "+91 99304 75531",
+            email: "info@primeeyecare.in",
+          },
+        },
+        {
+          name: "Dr. Rabindra Kumar Pandey",
+          country: "india",
+          state: "hyderabad",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-rabindra-kumar-pandey/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/03/dr-rabindra-kumar-pandey-38a48ac265f-041468a3f37.jpg",
+          address:
+            "Caring Vision Therapy & Neuro Vision Rehabilitation Center Chennai/Hyderabad, India\nAddress 10/16, plot 1134, first floor, 16th avenue , Ashok Nagar chennai",
+          contact: {
+            phone: "+919693630033",
+            email: "caringvisiontherapy@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Jon Jefferson W. Kho",
+          country: "philippines",
+          state: "quezon-city",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-jon-jefferson-w-kho/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/03/1517233031031.jpg",
+          address:
+            "Room 204 Anita Building, 1300 Timog Ave., Cor. Quezon Ave., Quezon City, Philippines",
+          contact: {
+            phone: "+63 285420331",
+            email: "klinicaojos@yahoo.com",
+          },
+        },
+        {
+          name: "Dr. Cynthia V. Del Mundo",
+          country: "philippines",
+          state: "quezon-city",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-cynthia-v-del-mundo/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/03/2.jpg",
+          address:
+            "Del Mundo Pediatric and Adult Eye Clinic\nEdsa corner North Avenue, 2nd level, near MRT station, beside Seattles Best, in front of Landmark, Quezon City, Philippines",
+          contact: {
+            phone: "+63 977 240 9516",
+            email: "delmundo_cynthia@yahoo.com",
+          },
+        },
+        {
+          name: "Dr. Irene Go",
+          country: "philippines",
+          state: "san-pablo",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-irene-go/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/03/IMG_6380-1020x1024.jpeg",
+          address:
+            "Vision Plus Center\nUltimart Mall, Marcos Paulino Street San Pablo City, Laguna (Region IVA) Philippines 4000",
+          contact: {
+            phone: "+63495620708",
+            email: "iclg929@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Yee Wen Khaw",
+          country: "malaysia",
+          state: "selangor",
+          profileUrl: "https://www.visualsnowinitiative.org/doctors/19273/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/03/VS-Worldwide-Static-42-819x1024.png",
+          address:
+            "Home & Work Optometry Care 15, Jalan Tengku Ampuan Zabedah B 9/B, Section 9. 40100 Shah Alam. Selangor. Malaysia",
+          contact: {
+            phone: "+603-55118689",
+            email: "hwoptom1@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Salve Marie S. Punzalan",
+          country: "philippines",
+          state: "manila",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-salve-marie-s-punzalan/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/04/5.jpg",
+          address:
+            "Medical Center Manila\nRM 315 Dr. Lawrence Tinio, U.N. Avenue cor Taft Avenue Manila",
+          contact: {
+            phone: null,
+            email: "salvemarie.solidum@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Josephine Frincks Maye-Gaw",
+          country: "philippines",
+          state: "cagayan-de-oro",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-josephine-frincks-maye-gaw/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Doc-avatar.jpg",
+          address:
+            "4th Level SM CDO Downtown Premier, C. M. Recto Avenue Corner S. Osmeña Street, Cagayan de Oro, Philippines",
+          contact: {
+            phone: "+63 905 917 4633",
+            email: "cardinal.eyeclinic@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Jinky L. Abuan",
+          country: "philippines",
+          state: "quezon-city",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-jinky-l-abuan/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/04/0bf5c8da0e415badf010ab197794d905.jpg",
+          address:
+            "FDM Medical Center Rm. 205, Medical Arts Bldg. 11 Banawe St. cor Cordiz St. NCR (National Capital Region), Quezon City, Philippines, 1113",
+          contact: {
+            phone: null,
+            email: null,
+          },
+        },
+        {
+          name: "Dr. Jezreelle Domingo-Hortaleza",
+          country: "philippines",
+          state: "valenzuela",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-jezreelle-domingo-hortaleza/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/04/337699523_206627605302984_391710810829531129_n.jpg",
+          address:
+            "Medoptique Medical and Optical Clinic \nNLEX Valenzuela Exit, Paso de Blas, Valenzuela, Philippines",
+          contact: {
+            phone: null,
+            email: "esweeodmd@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Jelynne T. Mangrobang",
+          country: "philippines",
+          state: "marikina-city",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-jelynne-t-mangrobang/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2023/04/Untitled.png",
+          address:
+            "C&B Circle Mall Liwasang Kalayaan Road,, Marikina City, Philippines",
+          contact: {
+            phone: "+63 920 448 5412",
+            email: "mangrobangoptical99@gmail.com",
+          },
+        },
+        {
+          name: "Dr. Gualberto E. Dato",
+          country: "philippines",
+          state: "makati",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-gualberto-e-dato/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/04/491225152_1187122093203511_3216548972400656047_n.jpg",
+          address: "9F Phinma Plaza, Plaza Drive, Rockwell Center, Makati City",
+          contact: {
+            phone: "+63 288982020",
+            email: "gedato@asianeyeinstitute.com",
+          },
+        },
+        {
+          name: "Dr. Elizabeth P. Malubay-Lucido",
+          country: "philippines",
+          state: "pasig",
+          profileUrl:
+            "https://www.visualsnowinitiative.org/doctors/dr-elizabeth-p-malubay-lucido/",
+          profilePicUrl:
+            "https://www.visualsnowinitiative.org/wp-content/uploads/2025/04/277582062_368809958588519_4487271307745585099_n.jpg",
+          address: "One Oasis Hub A, 108 Ortigas Avenue , Pasig, Philippines",
+          contact: {
+            phone: "+63 923 393 8984",
+            email: "emloptical@gmail.com",
+          },
+        },
+      ];
+
+      const container = document.getElementById("doctorContainer");
+      const searchInput = document.getElementById("searchInput");
+
+      function renderDoctors(doctorList) {
+        container.innerHTML = ""; // Clear current cards
+
+        if (doctorList.length === 0) {
+          container.innerHTML =
+            '<p style="color:#ccc; text-align:center; grid-column: 1 / -1;">No doctors found.</p>';
+          return;
+        }
+
+        doctorList.forEach((doctor) => {
+          const card = document.createElement("div");
+          card.className = "doctor-card";
+
+          const addressLines = doctor.address.split("\n").join("<br>");
+
+          card.innerHTML = `
+          <img src="${doctor.profilePicUrl}" alt="${doctor.name}" class="doctor-image">
+          <div class="doctor-info">
+            <div style="color: #ff4081;" class="doctor-name">${doctor.name}</div>
+            <div class="doctor-country-state">${doctor.country}, ${doctor.state}</div>
+            <div class="doctor-address">${addressLines}</div>
+            <div class="doctor-contact">📞 ${doctor.contact.phone}</div>
+            <div class="doctor-contact">📧 <a href="mailto:${doctor.contact.email}">${doctor.contact.email}</a></div>
+          </div>
+        `;
+
+          container.appendChild(card);
+        });
+      }
+
+      function handleSearch() {
+        const query = searchInput.value.trim().toLowerCase();
+
+        if (!query) {
+          renderDoctors(doctors); // Show all if empty
+          return;
+        }
+
+        const filtered = doctors.filter(
+          (doctor) =>
+            doctor.name.toLowerCase().includes(query) ||
+            doctor.country.toLowerCase().includes(query) ||
+            doctor.state.toLowerCase().includes(query)
+        );
+
+        renderDoctors(filtered);
+      }
+
+      // Event listener
+      searchInput.addEventListener("input", handleSearch);
+
+      // Initial render
+      renderDoctors(doctors);
+    </script>
+  </body>
+</html>
